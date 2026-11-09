@@ -1,0 +1,6 @@
+h <- c(123,132,142,145)
+w <- c(40,50,40,50)
+
+model <- lm(w ~ h)
+
+print(summary(model))
