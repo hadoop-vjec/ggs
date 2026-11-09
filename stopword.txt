@@ -1,0 +1,26 @@
+from mrjob.job import MRJob
+import re
+
+WORD_RE = re.compile(r"[a-zA-Z]+")
+
+class MRStopWordRemoval(MRJob):
+    def configure_args(self):
+        super().configure_args()
+        self.add_file_arg('--stop-words', help='Path to stop words file')
+
+    def mapper_init(self):
+        self.stop_words = set()
+        with open(self.options.stop_words) as f:
+            for line in f:
+                self.stop_words.add(line.strip().lower())
+
+    def mapper(self, _, line):
+        for word in WORD_RE.findall(line):
+            w = word.lower()
+            if w not in self.stop_words:
+                yield w, 1
+
+    def reducer(self, word, counts):
+        yield word, sum(counts)
+
+MRStopWordRemoval.run()
