@@ -1,0 +1,28 @@
+from mrjob.job import MRJob
+
+class Multiply(MRJob):
+    N = 3
+    P = 3
+
+    def mapper(self, _, line):
+        parts = line.strip().split(',')
+        matrix, i, j, val = parts[0], int(parts[1]), int(parts[2]), float(parts[3])
+        if matrix == 'A':
+            for col in range(self.P):
+                yield (i, col), ('A', j, val)
+        else:
+            for row in range(self.N):
+                yield (row, j), ('B', i, val)
+
+    def reducer(self, key, values):
+        a_vals = {}
+        b_vals = {}
+        for mat, idx, val in values:
+            if mat == 'A':
+                a_vals[idx] = val
+            else:
+                b_vals[idx] = val
+        result = sum(a_vals.get(k, 0) * b_vals.get(k, 0) for k in set(a_vals) | set(b_vals))
+        yield key, result
+
+Multiply.run()
