@@ -1,0 +1,9 @@
+X <- c(1,3,5,7,9)
+y <- c(2,4,6,8,10)
+z <- c(10,20,30,40,50)
+
+cat("varience of x :" , var(x))
+
+cat("covarience of x and y :",cov(x,y))
+
+cat("corr of x and y :",cor(x,y))
