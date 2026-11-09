@@ -1,0 +1,13 @@
+from mrjob.job import MRJob
+import re
+
+wordRe = re.cmpile(r"[\w']+")
+
+class MRwordCout(MRJob):
+  def mapper(self,_,line):
+    for word in wordRe.findall(line):
+      yield word.lower(),1
+  def reducer(self,word,counts):
+    yield word,sum(counts)
+
+MRwordCount.run()
